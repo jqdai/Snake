@@ -107,13 +107,10 @@ void Snake::Crawl(){
     Q.pop();
     board[tail.first][tail.second]=' ';
 }
-void Instruct(){
+void Snake::Instruct(){
     if(kbhit()){
-        char c;
-        switch (c){
-        case /* constant-expression */:/* code */break;
-        default:break;
-        }
+        char c=getchar();
+        if(c==72||c==75||c==78||c==80) move=c;
     }
 }
 
