@@ -4,7 +4,7 @@
 #include <string>
 #include <time.h>
 #include <conio.h>
-#define m 80
+#define m 30
 
 using namespace std;
 
@@ -24,7 +24,7 @@ class Snake {
         int move;
         int headx, heady;
 };
-queue<pair<int,int>> Q;
+queue<pair<int,int> > Q;
 
 Snake::Snake() {
     cout<<"Welcome to TAN CHI SHE!sisisisisisisisisi"<<endl;
@@ -36,7 +36,7 @@ Snake::Snake() {
         board[m - 1][i] = '@';
         board[i][m - 1] = '@';
     }
-    for (int i = 0; i < m - 1; i++) for (int j = 0; j < m - 1; j++) board[i][j] = ' ';
+    for (int i = 1; i < m - 1; i++) for (int j = 1; j < m - 1; j++) board[i][j] = ' ';
     Ini();
     NewFruit();
     Show();
@@ -85,6 +85,7 @@ int Snake::Action(){
     }
     Show();
     Instruct();
+    return 1;
 }
 void Snake::GameOver(){
     cout<<"The game has ended.\nInput an positive integer if you want to restart,and a negative one if you don`t."<<endl;
@@ -103,7 +104,7 @@ void Snake::Eat(){
 void Snake::Crawl(){
     board[headx][heady]='*';
     Q.push(make_pair(headx,heady));
-    pair<int,int> tail=Q.front;
+    pair<int,int> tail=Q.front();
     Q.pop();
     board[tail.first][tail.second]=' ';
 }
