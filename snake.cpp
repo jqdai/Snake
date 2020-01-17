@@ -3,7 +3,8 @@
 #include <queue>
 #include <string>
 #include <time.h>
-#define m 30
+#include <conio.h>
+#define m 80
 
 using namespace std;
 
@@ -14,6 +15,10 @@ class Snake {
         void Ini();
         void Show();
         int Action();
+        void GameOver();
+        void Eat();
+        void Crawl();
+        void Instruct();
     private:
         char board[m][m];
         int move;
@@ -22,6 +27,7 @@ class Snake {
 queue<pair<int,int>> Q;
 
 Snake::Snake() {
+    cout<<"Welcome to TAN CHI SHE!sisisisisisisisisi"<<endl;
     headx = 0;
     heady = 0;
     for (int i = 0; i < m; i++) {  //initialize chessboard
@@ -66,10 +72,48 @@ void Snake::Show(){
 }
 int Snake::Action(){
     switch(move){
-        case 72:break;
-        case 75:break;
-        case 78:break;
-        case 80:break;
+        case 72:headx--;break;
+        case 75:heady--;break;
+        case 78:heady++;break;
+        case 80:headx++;break;
+    }
+    switch(board[headx][heady]){
+        case '@':
+        case '*':GameOver();return 0;break;
+        case '$':Eat();break;
+        case ' ':Crawl();break;
+    }
+    Show();
+    Instruct();
+}
+void Snake::GameOver(){
+    cout<<"The game has ended.\nInput an positive integer if you want to restart,and a negative one if you don`t."<<endl;
+    int ss;
+    cin>>ss;
+    if(!(ss>0)){
+        cout<<"Game over.See you next time!"<<endl;
+        exit(0);
+    }
+}
+void Snake::Eat(){
+    board[headx][heady]='*';
+    Q.push(make_pair(headx,heady));
+    NewFruit();
+}
+void Snake::Crawl(){
+    board[headx][heady]='*';
+    Q.push(make_pair(headx,heady));
+    pair<int,int> tail=Q.front;
+    Q.pop();
+    board[tail.first][tail.second]=' ';
+}
+void Instruct(){
+    if(kbhit()){
+        char c;
+        switch (c){
+        case /* constant-expression */:/* code */break;
+        default:break;
+        }
     }
 }
 
