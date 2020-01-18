@@ -4,7 +4,8 @@
 #include <string>
 #include <time.h>
 #include <conio.h>
-#define m 30
+#include "windows.h"
+#define m 20
 
 using namespace std;
 
@@ -21,7 +22,7 @@ class Snake {
         void Instruct();
     private:
         char board[m][m];
-        char move;
+        int move;
         int headx, heady;
 };
 queue<pair<int,int> > Q;
@@ -54,10 +55,10 @@ void Snake::NewFruit() {
 }
 void Snake::Ini(){
     switch (rand() % 4) {
-        case 0:move = 37;break;
-        case 1:move = 38;break;
-        case 2:move = 39;break;
-        case 3:move = 40;break;
+        case 0:move = 72;break;
+        case 1:move = 75;break;
+        case 2:move = 78;break;
+        case 3:move = 80;break;
     }
     srand(time(NULL));
     headx = rand() % (m - 6) + 3;
@@ -66,6 +67,20 @@ void Snake::Ini(){
     Q.push(make_pair(headx,heady));
 }
 void Snake::Show(){
+    switch (move){
+        case 72:
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+            break;
+        case 75:
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE);
+            break;
+        case 77:
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_RED);
+            break;
+        case 80:
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE);
+            break;
+    }
     for(int i=0;i<m;i++){
         for(int j=0;j<m;j++) cout<<board[i][j]<<" ";
         cout<<endl;
@@ -73,10 +88,10 @@ void Snake::Show(){
 }
 int Snake::Action(){
     switch(move){
-        case 37:headx--;break;
-        case 38:heady++;break;
-        case 39:headx++;break;
-        case 40:heady--;break;
+        case 72:headx--;break;
+        case 75:heady--;break;
+        case 77:heady++;break;
+        case 80:headx++;break;
     }
     switch(board[headx][heady]){
         case '@':
@@ -85,7 +100,7 @@ int Snake::Action(){
         case ' ':Crawl();break;
     }
     Show();
-    _sleep(200);
+    //_sleep(200);
     Instruct();
     return 1;
 }
@@ -114,10 +129,10 @@ void Snake::Instruct(){
 	clock_t timeBegin = clock();
     char c;
     while(1){
-        if(kbhit()) c=getchar();
+        if(kbhit()) c=getch();
         else if (clock() - timeBegin >= 1000) break;//why?????
     }
-    if(c==37||c==38||c==39||c==40) move=c;
+    if(c==72||c==75||c==77||c==80) move=c;
 }
 
 int main() {

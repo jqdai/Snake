@@ -17,6 +17,7 @@
 ## 功能
 
 - 单次运行程序可以连续玩多局游戏
+- 为了提高可玩性，蛇向上下左右移动时棋盘颜色分别显示白青紫黄四种不同颜色
 
 ## 可以改进的方向
 
@@ -25,3 +26,4 @@
 ## 贡献者
 
 - [Jiaqi Dai](https://github.com/jqdai) - Fudan University
+- [reference website](https://blog.csdn.net/timerzip/article/details/83719740)
