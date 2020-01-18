@@ -31,3 +31,4 @@
 
 - [别人做的贪吃蛇](https://blog.csdn.net/timerzip/article/details/83719740)
 - [在控制台中输出不同颜色](https://blog.csdn.net/shinef/article/details/95026723)
+- [清空队列（queue，不是deque）](https://www.cnblogs.com/zhonghuasong/p/7524624.html)
