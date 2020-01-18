@@ -21,15 +21,17 @@ class Snake {
         void Instruct();
     private:
         char board[m][m];
-        int move;
+        char move;
         int headx, heady;
 };
 queue<pair<int,int> > Q;
 
 Snake::Snake() {
-    cout<<"Welcome to TAN CHI SHE!sisisisisisisisisi"<<endl;
+    cout<<"Welcome to TAN CHI SHE!sisisisisisisisisi"<<endl<<endl;
     headx = 0;
     heady = 0;
+    queue<pair<int,int> > empty;
+    swap(empty,Q);
     for (int i = 0; i < m; i++) {  //initialize chessboard
         board[0][i] = '@';
         board[i][0] = '@';
@@ -47,16 +49,16 @@ void Snake::NewFruit() {
     do {
         x = rand() % (m - 2) + 1;
         y = rand() % (m - 2) + 1;
-    } while(board[x][y] == ' ');
+    } while(board[x][y] != ' ');
     board[x][y] = '$';
 }
 void Snake::Ini(){
-    int x, y, inimov = rand() % 4 + 1;
+    int x, y, inimov = rand() % 4;
     switch (inimov) {
-        case 1:move = 72;break;
-        case 2:move = 75;break;
-        case 3:move = 78;break;
-        case 4:move = 80;break;
+        case 0:move = 37;break;
+        case 1:move = 38;break;
+        case 2:move = 39;break;
+        case 3:move = 40;break;
     }
     srand(time(NULL));
     x = rand() % (m - 6) + 3;
@@ -72,18 +74,19 @@ void Snake::Show(){
 }
 int Snake::Action(){
     switch(move){
-        case 72:headx--;break;
-        case 75:heady--;break;
-        case 78:heady++;break;
-        case 80:headx++;break;
+        case 37:headx--;break;
+        case 38:heady++;break;
+        case 39:headx++;break;
+        case 40:heady--;break;
     }
     switch(board[headx][heady]){
         case '@':
-        case '*':GameOver();return 0;break;
+        case '*':GameOver();return 0;
         case '$':Eat();break;
         case ' ':Crawl();break;
     }
     Show();
+    _sleep(200);
     Instruct();
     return 1;
 }
@@ -109,10 +112,11 @@ void Snake::Crawl(){
     board[tail.first][tail.second]=' ';
 }
 void Snake::Instruct(){
-    if(kbhit()){
-        char c=getchar();
-        if(c==72||c==75||c==78||c==80) move=c;
+    char c;
+    while(1){
+        if(kbhit()) c=getchar();
     }
+    if(c==37||c==38||c==39||c==40) move=c;
 }
 
 int main() {
