@@ -26,4 +26,8 @@
 ## 贡献者
 
 - [Jiaqi Dai](https://github.com/jqdai) - Fudan University
-- [reference website](https://blog.csdn.net/timerzip/article/details/83719740)
+
+## 一些参考
+
+- [别人做的贪吃蛇](https://blog.csdn.net/timerzip/article/details/83719740)
+- [在控制台中输出不同颜色](https://blog.csdn.net/shinef/article/details/95026723)
