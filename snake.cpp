@@ -53,18 +53,17 @@ void Snake::NewFruit() {
     board[x][y] = '$';
 }
 void Snake::Ini(){
-    int x, y, inimov = rand() % 4;
-    switch (inimov) {
+    switch (rand() % 4) {
         case 0:move = 37;break;
         case 1:move = 38;break;
         case 2:move = 39;break;
         case 3:move = 40;break;
     }
     srand(time(NULL));
-    x = rand() % (m - 6) + 3;
-    y = rand() % (m - 6) + 3;
-    board[x][y] = '*';
-    Q.push(make_pair(x,y));
+    headx = rand() % (m - 6) + 3;
+    heady = rand() % (m - 6) + 3;
+    board[headx][heady] = '*';
+    Q.push(make_pair(headx,heady));
 }
 void Snake::Show(){
     for(int i=0;i<m;i++){
@@ -112,9 +111,11 @@ void Snake::Crawl(){
     board[tail.first][tail.second]=' ';
 }
 void Snake::Instruct(){
+	clock_t timeBegin = clock();
     char c;
     while(1){
         if(kbhit()) c=getchar();
+        else if (clock() - timeBegin >= 1000) break;//why?????
     }
     if(c==37||c==38||c==39||c==40) move=c;
 }
