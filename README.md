@@ -25,6 +25,7 @@ snake.cpp：
 newsnake.cpp：
 
 - 终于不用一帧一帧显示了，呵护视力从我做起！
+- 固定了游戏界面的位置，改进了游戏界面的设计，把游戏说明放在了游戏界面右侧
 
 ## 贡献者
 
@@ -33,6 +34,10 @@ newsnake.cpp：
 ## 一些参考
 
 - [别人做的“帧正的”贪吃蛇](https://blog.csdn.net/timerzip/article/details/83719740)
+- [别人做的“真正的”贪吃蛇](https://blog.csdn.net/ganyonjie/article/details/91387649)
 - [在控制台中输出不同颜色](https://blog.csdn.net/shinef/article/details/95026723)
 - [清空队列（queue，不是deque）](https://www.cnblogs.com/zhonghuasong/p/7524624.html)
+- [getchar，getch，getche的异同](https://blog.csdn.net/qq_28311415/article/details/81167211)
+- [控制台界面控制](https://blog.csdn.net/bnb45/article/details/7934840)
 - [控制台相关的API的用法](https://www.cnblogs.com/lanhaicode/p/10498497.html)
+- [枚举类型](https://www.runoob.com/w3cnote/cpp-enum-intro.html)
