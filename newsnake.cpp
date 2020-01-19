@@ -5,7 +5,6 @@
 #include <time.h>
 #include <conio.h>
 #include <windows.h>
-#define m 20
 using namespace std;
 enum Chessboard { WIDTH=80,HEIGHT=20 };
 enum Direction { LEFT = 72, DOWN = 75, UP = 77, RIGHT = 80, CENTER };
@@ -16,9 +15,9 @@ class Snake {
         Snake();
         ~Snake();
         void FrameWork();
-        bool Alive(int,int);
+        void InitBoard();
         void NewFruit();
-        void Ini();
+        bool Alive(int,int);
         int Action();
         void GameOver();
         void Eat();
@@ -26,7 +25,7 @@ class Snake {
         void Instruct();
     private:
         char board[WIDTH][HEIGHT];
-        queue<pair<int,int> > Q;
+        queue<COORD> Q;
         int move;
         int length;
         int score;
@@ -35,19 +34,14 @@ class Snake {
 
 Snake::Snake() {
     FrameWork();
-    srand(time(NULL));
-    headx = 0;
-    heady = 0;
+    InitBoard();
+    NewFruit();
     length = 1;
     score = 0;
     move=CENTER;
-    queue<pair<int,int> > empty;
-    swap(empty,Q);
-    Ini();
-    NewFruit();
 }
 Snake::~Snake(){
-    CloseHandle(hOUT);
+    CloseHandle(hOut);
 }
 void Snake::FrameWork(){
     system("cls");
@@ -84,25 +78,37 @@ void Snake::FrameWork(){
     SetConsoleCursorPosition(hOut,COORD{WIDTH+10,6});
     cout<<"Your current score: "<<score;
 }
-bool Snake::Alive(int x,int y){
-    return !(x*y==0||x==WIDTH||y==HEIGHT);
+void Snake::InitBoard(){
+    for(int i=0;i<HEIGHT;i++) for(int j=0;j<WIDTH;j++) board[i][j]=' ';
+    for(int i=0;i<WIDTH;i++){
+        board[0][i]='@';
+        board[HEIGHT][i]='@';
+    }
+    for(int i=0;i<HEIGHT;i++){
+        board[i][0]='@';
+        board[i][WIDTH]='@';
+    }
+    queue<COORD> empty;
+    swap(empty,Q);
+    srand(time(NULL));
+    headx = rand() % (WIDTH - 5) + 3;
+    heady = rand() % (HEIGHT - 5) + 3;
+    board[headx][heady] = '*';
+    Q.push(COORD{headx,heady});
+    SetConsoleCursorPosition(hOut,COORD{headx,heady});
+    cout<<"*";
 }
 void Snake::NewFruit() {
     int x, y;
     srand(time(NULL));
     do {
-        x = rand() % (m - 2) + 1;
-        y = rand() % (m - 2) + 1;
+        x = rand() % (WIDTH - 5) + 3;
+        y = rand() % (HEIGHT - 5) + 3;
     } while(board[x][y] != ' ');
     board[x][y] = '$';
 }
-void Snake::Ini(){
-    move=CENTER;
-    srand(time(NULL));
-    headx = rand() % (m - 6) + 3;
-    heady = rand() % (m - 6) + 3;
-    board[headx][heady] = '*';
-    Q.push(make_pair(headx,heady));
+bool Snake::Alive(int x,int y){
+    return !(x*y==0||x==WIDTH||y==HEIGHT||board[x][y]=='*');
 }
 int Snake::Action(){
     switch(move){
@@ -117,10 +123,6 @@ int Snake::Action(){
         case '$':Eat();break;
         case ' ':Crawl();break;
     }
-    for(int i=0;i<m;i++){
-        for(int j=0;j<m;j++) cout<<board[i][j]<<" ";
-        cout<<endl;
-    }
     Instruct();
     return 1;
 }
@@ -134,16 +136,18 @@ void Snake::GameOver(){
     }
 }
 void Snake::Eat(){
+    SetConsoleCursorPosition(hOut,COORD{headx,heady});
+    cout<<"*";
     board[headx][heady]='*';
-    Q.push(make_pair(headx,heady));
+    Q.push(COORD{headx,heady});
     NewFruit();
 }
 void Snake::Crawl(){
     board[headx][heady]='*';
-    Q.push(make_pair(headx,heady));
-    pair<int,int> tail=Q.front();
+    Q.push(COORD{headx,heady});
+    COORD tail=Q.front();
     Q.pop();
-    board[tail.first][tail.second]=' ';
+    board[tail.X][tail.Y]=' ';
 }
 void Snake::Instruct(){
 	clock_t timeBegin = clock();
