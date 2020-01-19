@@ -4,45 +4,88 @@
 #include <string>
 #include <time.h>
 #include <conio.h>
-#include "windows.h"
+#include <windows.h>
 #define m 20
-
 using namespace std;
+enum Chessboard { WIDTH=80,HEIGHT=20 };
+enum Direction { LEFT = 72, DOWN = 75, UP = 77, RIGHT = 80, CENTER };
+HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 
 class Snake {
     public:
         Snake();
+        ~Snake();
+        void FrameWork();
+        bool Alive(int,int);
         void NewFruit();
         void Ini();
-        void Show();
         int Action();
         void GameOver();
         void Eat();
         void Crawl();
         void Instruct();
     private:
-        char board[m][m];
+        char board[WIDTH][HEIGHT];
+        queue<pair<int,int> > Q;
         int move;
+        int length;
+        int score;
         int headx, heady;
 };
-queue<pair<int,int> > Q;
 
 Snake::Snake() {
-    cout<<"Welcome to TAN CHI SHE!sisisisisisisisisi"<<endl<<endl;
+    FrameWork();
+    srand(time(NULL));
     headx = 0;
     heady = 0;
+    length = 1;
+    score = 0;
+    move=CENTER;
     queue<pair<int,int> > empty;
     swap(empty,Q);
-    for (int i = 0; i < m; i++) {  //initialize chessboard
-        board[0][i] = '@';
-        board[i][0] = '@';
-        board[m - 1][i] = '@';
-        board[i][m - 1] = '@';
-    }
-    for (int i = 1; i < m - 1; i++) for (int j = 1; j < m - 1; j++) board[i][j] = ' ';
     Ini();
     NewFruit();
-    Show();
+}
+Snake::~Snake(){
+    CloseHandle(hOUT);
+}
+void Snake::FrameWork(){
+    system("cls");
+    SetConsoleCursorPosition(hOut,COORD{0,0});
+    cout<<"╔";
+    SetConsoleCursorPosition(hOut,COORD{0,HEIGHT});
+    cout<<"╚";
+    for (int i = 2; i <= WIDTH; i += 2) {
+		SetConsoleCursorPosition(hOut,COORD{i,0});
+		cout << "═";
+		SetConsoleCursorPosition(hOut,COORD{i,HEIGHT});
+		cout << "═";
+	}
+    SetConsoleCursorPosition(hOut,COORD{WIDTH,0});
+    cout<<"╗";
+    SetConsoleCursorPosition(hOut,COORD{WIDTH,HEIGHT});
+    cout<<"╝";
+    for (int i = 1; i < HEIGHT; i ++) {
+		SetConsoleCursorPosition(hOut,COORD{0,i});
+		std::cout << "║";
+		SetConsoleCursorPosition(hOut,COORD{WIDTH,i});
+		std::cout << "║";
+	}
+    SetConsoleCursorPosition(hOut,COORD{WIDTH+15,1});
+    cout<<"Some directions:";
+    SetConsoleCursorPosition(hOut,COORD{WIDTH+2,2});
+    cout<<"1. Control the direction by tabing direction keys";
+    SetConsoleCursorPosition(hOut,COORD{WIDTH+2,3});
+    cout<<"2. Tab space key to have a timeout.";
+    SetConsoleCursorPosition(hOut,COORD{WIDTH+2,4});
+    cout<<"3. Tab ESC to qiut game.";
+    SetConsoleCursorPosition(hOut,COORD{WIDTH+2,5});
+    cout<<"4. Getting the fruit will earn you 10 points.";
+    SetConsoleCursorPosition(hOut,COORD{WIDTH+10,6});
+    cout<<"Your current score: "<<score;
+}
+bool Snake::Alive(int x,int y){
+    return !(x*y==0||x==WIDTH||y==HEIGHT);
 }
 void Snake::NewFruit() {
     int x, y;
@@ -54,44 +97,19 @@ void Snake::NewFruit() {
     board[x][y] = '$';
 }
 void Snake::Ini(){
-    switch (rand() % 4) {
-        case 0:move = 72;break;
-        case 1:move = 75;break;
-        case 2:move = 78;break;
-        case 3:move = 80;break;
-    }
+    move=CENTER;
     srand(time(NULL));
     headx = rand() % (m - 6) + 3;
     heady = rand() % (m - 6) + 3;
     board[headx][heady] = '*';
     Q.push(make_pair(headx,heady));
 }
-void Snake::Show(){
-    switch (move){
-        case 72:
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-            break;
-        case 75:
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE);
-            break;
-        case 77:
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_RED);
-            break;
-        case 80:
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE);
-            break;
-    }
-    for(int i=0;i<m;i++){
-        for(int j=0;j<m;j++) cout<<board[i][j]<<" ";
-        cout<<endl;
-    }
-}
 int Snake::Action(){
     switch(move){
-        case 72:headx--;break;
-        case 75:heady--;break;
-        case 77:heady++;break;
-        case 80:headx++;break;
+        case LEFT:headx--;break;
+        case DOWN:heady--;break;
+        case UP:heady++;break;
+        case RIGHT:headx++;break;
     }
     switch(board[headx][heady]){
         case '@':
@@ -99,13 +117,15 @@ int Snake::Action(){
         case '$':Eat();break;
         case ' ':Crawl();break;
     }
-    Show();
-    //_sleep(200);
+    for(int i=0;i<m;i++){
+        for(int j=0;j<m;j++) cout<<board[i][j]<<" ";
+        cout<<endl;
+    }
     Instruct();
     return 1;
 }
 void Snake::GameOver(){
-    cout<<"The game has ended.\nInput an positive integer if you want to restart,and a negative one if you don`t."<<endl;
+    cout<<endl<<endl<<"The game has ended.\nInput an positive integer if you want to restart,and a negative one if you don`t."<<endl;
     int ss;
     cin>>ss;
     if(!(ss>0)){
@@ -136,8 +156,11 @@ void Snake::Instruct(){
 }
 
 int main() {
+    system("title 贪吃蛇");
+	system("mode con cols=150 lines=30");
     int sig;
     while (1) {
+        cout<<"Welcome to TAN CHI SHE!sisisisisisisisisi"<<endl<<endl;
         cout << "Tab any number key to start he game.<<<<<<>>>>>>Tab any other keys to exit." << endl;
         cin >> sig;
         if (!(sig >= 0)) {

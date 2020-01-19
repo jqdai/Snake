@@ -40,4 +40,5 @@ newsnake.cpp：
 - [getchar，getch，getche的异同](https://blog.csdn.net/qq_28311415/article/details/81167211)
 - [控制台界面控制](https://blog.csdn.net/bnb45/article/details/7934840)
 - [控制台相关的API的用法](https://www.cnblogs.com/lanhaicode/p/10498497.html)
+- system()
 - [枚举类型](https://www.runoob.com/w3cnote/cpp-enum-intro.html)
