@@ -10,6 +10,7 @@ using namespace std;
 enum Chessboard { WIDTH=80,HEIGHT=20 };
 enum Direction { LEFT, DOWN, UP, RIGHT, CENTER };
 HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+CONSOLE_CURSOR_INFO CursorInfo={1,0};
 
 class Snake {
     public:
@@ -22,7 +23,6 @@ class Snake {
         void GameOver();
         void Eat();
         void Crawl();
-        void Timeout();
     private:
         char board[WIDTH][HEIGHT];
         queue<COORD> Q;
@@ -35,8 +35,8 @@ class Snake {
 
 Snake::Snake() {
     FrameWork();
-    InitBoard();
     NewFruit();
+    InitBoard();
     length=1;
     score=0;
     speed=100;
@@ -140,21 +140,16 @@ int Snake::Action(){
             case '$':Eat();break;
             case ' ':Crawl();break;
         }
+        SetConsoleCursorPosition(hOut,COORD{WIDTH+10,6});
+        cout<<"Your current score: "<<score;
+        if(move==LEFT||move==RIGHT) Sleep((speed*3)/length);
+	    else Sleep((speed*4.5)/length);
     }
-    SetConsoleCursorPosition(hOut,COORD{WIDTH+10,6});
-    cout<<"Your current score: "<<score;
-    if(move==LEFT||move==RIGHT) Sleep((speed*3)/length);
-	else Sleep((speed*4.5)/length);
     return 1;
 }
-void Snake::GameOver(){/*to be continued*/
-    /*cout<<endl<<endl<<"The game has ended.\nInput an positive integer if you want to restart,and a negative one if you don`t."<<endl;
-    int ss;
-    cin>>ss;
-    if(!(ss>0)){
-        cout<<"Game over.See you next time!"<<endl;
-        exit(0);
-    }*/;
+void Snake::GameOver(){
+    SetConsoleCursorPosition(hOut,COORD{WIDTH/2,HEIGHT/2});
+    cout<<"The game has ended.";
 }
 void Snake::Eat(){
     SetConsoleCursorPosition(hOut,COORD{headx,heady});
@@ -176,25 +171,10 @@ void Snake::Crawl(){
     cout<<" ";
     board[tail.X][tail.Y]=' ';
 }
-void Snake::Timeout(){/*to be continued*/
-    ;
-}
 
-int main() {/*to be continued*/
+int main() {
     system("title 贪吃蛇");
 	system("mode con cols=150 lines=30");
-    /*int sig;
-    while (1) {
-        cout<<"Welcome to TAN CHI SHE!sisisisisisisisisi"<<endl<<endl;
-        cout << "Tab any number key to start he game.<<<<<<>>>>>>Tab any other keys to exit." << endl;
-        cin >> sig;
-        if (!(sig >= 0)) {
-            cout << "Successfully exited.See you next time." << endl;
-            exit(0);
-        }
-        Snake snake;
-        while(snake.Action()) ;
-    }*/
     Snake snake;
     while(snake.Action()) ;
 }
