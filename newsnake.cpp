@@ -6,8 +6,9 @@
 #include <conio.h>
 #include <windows.h>
 using namespace std;
+
 enum Chessboard { WIDTH=80,HEIGHT=20 };
-enum Direction { LEFT = 72, DOWN = 75, UP = 77, RIGHT = 80, CENTER };
+enum Direction { LEFT, DOWN, UP, RIGHT, CENTER };
 HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 
 class Snake {
@@ -17,15 +18,15 @@ class Snake {
         void FrameWork();
         void InitBoard();
         void NewFruit();
-        bool Alive(int,int);
         int Action();
         void GameOver();
         void Eat();
         void Crawl();
-        void Instruct();
+        void Timeout();
     private:
         char board[WIDTH][HEIGHT];
         queue<COORD> Q;
+        int speed;
         int move;
         int length;
         int score;
@@ -36,8 +37,9 @@ Snake::Snake() {
     FrameWork();
     InitBoard();
     NewFruit();
-    length = 1;
-    score = 0;
+    length=1;
+    score=0;
+    speed=100;
     move=CENTER;
 }
 Snake::~Snake(){
@@ -98,7 +100,7 @@ void Snake::InitBoard(){
     SetConsoleCursorPosition(hOut,COORD{headx,heady});
     cout<<"*";
 }
-void Snake::NewFruit() {
+void Snake::NewFruit(){
     int x, y;
     srand(time(NULL));
     do {
@@ -106,34 +108,53 @@ void Snake::NewFruit() {
         y = rand() % (HEIGHT - 5) + 3;
     } while(board[x][y] != ' ');
     board[x][y] = '$';
-}
-bool Snake::Alive(int x,int y){
-    return !(x*y==0||x==WIDTH||y==HEIGHT||board[x][y]=='*');
+    SetConsoleCursorPosition(hOut,COORD{x,y});
+    cout<<"$";
 }
 int Snake::Action(){
-    switch(move){
-        case LEFT:headx--;break;
-        case DOWN:heady--;break;
-        case UP:heady++;break;
-        case RIGHT:headx++;break;
+    Sleep(speed);
+    if(kbhit()){
+        switch(getch()){
+            case 'W':
+            case 'w':move=UP;break;
+            case 'S':
+            case 's':move=DOWN;break;
+            case 'A':
+            case 'a':move=LEFT;break;
+            case 'D':
+            case 'd':move=RIGHT;break;
+            case ' ':move=CENTER;break;
+            case 27:GameOver();return 0;
+        }
+    }else{
+        switch(move){
+            case LEFT:headx--;break;
+            case DOWN:heady--;break;
+            case UP:heady++;break;
+            case RIGHT:headx++;break;
+            case CENTER:return 1;
+        }
+        switch(board[headx][heady]){
+            case '@':
+            case '*':GameOver();return 0;
+            case '$':Eat();break;
+            case ' ':Crawl();break;
+        }
     }
-    switch(board[headx][heady]){
-        case '@':
-        case '*':GameOver();return 0;
-        case '$':Eat();break;
-        case ' ':Crawl();break;
-    }
-    Instruct();
+    SetConsoleCursorPosition(hOut,COORD{WIDTH+10,6});
+    cout<<"Your current score: "<<score;
+    if(move==LEFT||move==RIGHT) Sleep((speed*3)/length);
+	else Sleep((speed*4.5)/length);
     return 1;
 }
-void Snake::GameOver(){
-    cout<<endl<<endl<<"The game has ended.\nInput an positive integer if you want to restart,and a negative one if you don`t."<<endl;
+void Snake::GameOver(){/*to be continued*/
+    /*cout<<endl<<endl<<"The game has ended.\nInput an positive integer if you want to restart,and a negative one if you don`t."<<endl;
     int ss;
     cin>>ss;
     if(!(ss>0)){
         cout<<"Game over.See you next time!"<<endl;
         exit(0);
-    }
+    }*/;
 }
 void Snake::Eat(){
     SetConsoleCursorPosition(hOut,COORD{headx,heady});
@@ -141,28 +162,28 @@ void Snake::Eat(){
     board[headx][heady]='*';
     Q.push(COORD{headx,heady});
     NewFruit();
+    score+=10;
+    length++;
 }
 void Snake::Crawl(){
+    SetConsoleCursorPosition(hOut,COORD{headx,heady});
+    cout<<"*";
     board[headx][heady]='*';
     Q.push(COORD{headx,heady});
     COORD tail=Q.front();
     Q.pop();
+    SetConsoleCursorPosition(hOut,COORD{tail.X,tail.Y});
+    cout<<" ";
     board[tail.X][tail.Y]=' ';
 }
-void Snake::Instruct(){
-	clock_t timeBegin = clock();
-    char c;
-    while(1){
-        if(kbhit()) c=getch();
-        else if (clock() - timeBegin >= 1000) break;//why?????
-    }
-    if(c==72||c==75||c==77||c==80) move=c;
+void Snake::Timeout(){/*to be continued*/
+    ;
 }
 
-int main() {
+int main() {/*to be continued*/
     system("title 贪吃蛇");
 	system("mode con cols=150 lines=30");
-    int sig;
+    /*int sig;
     while (1) {
         cout<<"Welcome to TAN CHI SHE!sisisisisisisisisi"<<endl<<endl;
         cout << "Tab any number key to start he game.<<<<<<>>>>>>Tab any other keys to exit." << endl;
@@ -173,5 +194,7 @@ int main() {
         }
         Snake snake;
         while(snake.Action()) ;
-    }
+    }*/
+    Snake snake;
+    while(snake.Action()) ;
 }
