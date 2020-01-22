@@ -28,7 +28,6 @@ class Snake {
         int move;
         int length;
         int score;
-        int headx,heady;
         int fruitx,fruity;
 };
 
@@ -82,8 +81,8 @@ void Snake::FrameWork(){
 void Snake::InitBoard(){
     V.clear();
     srand(time(NULL));
-    headx = rand() % (WIDTH - 5) + 3;
-    heady = rand() % (HEIGHT - 5) + 3;
+    int headx = rand() % (WIDTH - 5) + 3;
+    int heady = rand() % (HEIGHT - 5) + 3;
     V.push_back(COORD{headx,heady});
     SetConsoleCursorPosition(hOut,COORD{headx,heady});
     cout<<"*";
@@ -102,7 +101,6 @@ bool Snake::Used(){
    return false;
 }
 int Snake::Action(){
-    Sleep(speed);
     if(V[0].X==0||V[0].Y==0||V[0].X==WIDTH||V[0].Y==HEIGHT){
         GameOver();
         return 0;
@@ -124,7 +122,7 @@ int Snake::Action(){
             SetConsoleCursorPosition(hOut,COORD{V[i].X,V[i].Y});
             cout<<" ";
         }
-        for(int i=length-1;i>1;i--){
+        for(int i=length-1;i>0;i--){
             V[i].X=V[i-1].X;
             V[i].Y=V[i-1].Y;
         }
@@ -136,6 +134,7 @@ int Snake::Action(){
             case CENTER:return 1;
         }
         if(V[0].X==fruitx&&V[0].Y==fruity){
+            V.push_back(COORD{V[length-1].X,V[length-1].Y});
             NewFruit();
             score+=length*speed;
             length++;
@@ -160,5 +159,6 @@ int main() {
     system("title 贪吃蛇");
 	system("mode con cols=150 lines=30");
     Snake snake;
+    Sleep(2000);
     while(snake.Action()) ;
 }
