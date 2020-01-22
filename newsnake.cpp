@@ -19,7 +19,7 @@ class Snake {
         void FrameWork();
         void InitBoard();
         void NewFruit();
-        int Action();
+        void Action();
         void GameOver();
         void Eat();
         void Crawl();
@@ -111,7 +111,8 @@ void Snake::NewFruit(){
     SetConsoleCursorPosition(hOut,COORD{x,y});
     cout<<"$";
 }
-int Snake::Action(){
+void Snake::Action(){
+    while(1){
     Sleep(speed);
     if(kbhit()){
         switch(getch()){
@@ -124,19 +125,19 @@ int Snake::Action(){
             case 'D':
             case 'd':move=RIGHT;break;
             case ' ':move=CENTER;break;
-            case 27:GameOver();return 0;
+            case 27:GameOver();return;
         }
     }else{
+        if(move==CENTER) continue;
         switch(move){
             case LEFT:headx--;break;
             case DOWN:heady--;break;
             case UP:heady++;break;
             case RIGHT:headx++;break;
-            case CENTER:return 1;
         }
         switch(board[headx][heady]){
             case '@':
-            case '*':GameOver();return 0;
+            case '*':GameOver();return;
             case '$':Eat();break;
             case ' ':Crawl();break;
         }
@@ -145,7 +146,7 @@ int Snake::Action(){
         if(move==LEFT||move==RIGHT) Sleep((speed*3)/length);
 	    else Sleep((speed*4.5)/length);
     }
-    return 1;
+    }
 }
 void Snake::GameOver(){
     SetConsoleCursorPosition(hOut,COORD{WIDTH/2,HEIGHT/2});
@@ -176,5 +177,5 @@ int main() {
     system("title 贪吃蛇");
 	system("mode con cols=150 lines=30");
     Snake snake;
-    while(snake.Action()) ;
+    snake.Action();
 }
