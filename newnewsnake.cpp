@@ -1,150 +1,164 @@
 #include <algorithm>
 #include <iostream>
-#include <queue>
+#include <vector>
 #include <string>
 #include <time.h>
 #include <conio.h>
-#include "windows.h"
-#define m 20
-
+#include <windows.h>
 using namespace std;
+
+enum Chessboard { WIDTH=80,HEIGHT=20 };
+enum Direction { LEFT, DOWN, UP, RIGHT, CENTER };
+HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+CONSOLE_CURSOR_INFO CursorInfo={1,0};
 
 class Snake {
     public:
         Snake();
+        ~Snake();
+        void FrameWork();
+        void InitBoard();
         void NewFruit();
-        void Ini();
-        void Show();
+        bool Used();
         int Action();
         void GameOver();
-        void Eat();
-        void Crawl();
-        void Instruct();
     private:
-        char board[m][m];
+        vector<COORD> V;
+        int speed;
         int move;
-        int headx, heady;
+        int length;
+        int score;
+        int headx,heady;
+        int fruitx,fruity;
 };
-queue<pair<int,int> > Q;
 
 Snake::Snake() {
-    cout<<"Welcome to TAN CHI SHE!sisisisisisisisisi"<<endl<<endl;
-    headx = 0;
-    heady = 0;
-    queue<pair<int,int> > empty;
-    swap(empty,Q);
-    for (int i = 0; i < m; i++) {  //initialize chessboard
-        board[0][i] = '@';
-        board[i][0] = '@';
-        board[m - 1][i] = '@';
-        board[i][m - 1] = '@';
-    }
-    for (int i = 1; i < m - 1; i++) for (int j = 1; j < m - 1; j++) board[i][j] = ' ';
-    Ini();
+    FrameWork();
     NewFruit();
-    Show();
+    InitBoard();
+    length=1;
+    score=0;
+    speed=100;
+    move=CENTER;
 }
-void Snake::NewFruit() {
-    int x, y;
+Snake::~Snake(){
+    CloseHandle(hOut);
+}
+void Snake::FrameWork(){
+    system("cls");
+    SetConsoleCursorPosition(hOut,COORD{0,0});
+    cout<<"╔";
+    SetConsoleCursorPosition(hOut,COORD{0,HEIGHT});
+    cout<<"╚";
+    for (int i = 2; i <= WIDTH; i += 2) {
+		SetConsoleCursorPosition(hOut,COORD{i,0});
+		cout << "═";
+		SetConsoleCursorPosition(hOut,COORD{i,HEIGHT});
+		cout << "═";
+	}
+    SetConsoleCursorPosition(hOut,COORD{WIDTH,0});
+    cout<<"╗";
+    SetConsoleCursorPosition(hOut,COORD{WIDTH,HEIGHT});
+    cout<<"╝";
+    for (int i = 1; i < HEIGHT; i ++) {
+		SetConsoleCursorPosition(hOut,COORD{0,i});
+		std::cout << "║";
+		SetConsoleCursorPosition(hOut,COORD{WIDTH,i});
+		std::cout << "║";
+	}
+    SetConsoleCursorPosition(hOut,COORD{WIDTH+15,1});
+    cout<<"Some directions:";
+    SetConsoleCursorPosition(hOut,COORD{WIDTH+2,2});
+    cout<<"1. Control the direction by tabing direction keys";
+    SetConsoleCursorPosition(hOut,COORD{WIDTH+2,3});
+    cout<<"2. Tab space key to have a timeout.";
+    SetConsoleCursorPosition(hOut,COORD{WIDTH+2,4});
+    cout<<"3. Tab ESC to qiut game.";
+    SetConsoleCursorPosition(hOut,COORD{WIDTH+2,5});
+    cout<<"4. Getting the fruit will earn you 10 points.";
+    SetConsoleCursorPosition(hOut,COORD{WIDTH+10,6});
+    cout<<"Your current score: "<<score;
+}
+void Snake::InitBoard(){
+    V.clear();
+    srand(time(NULL));
+    headx = rand() % (WIDTH - 5) + 3;
+    heady = rand() % (HEIGHT - 5) + 3;
+    V.push_back(COORD{headx,heady});
+    SetConsoleCursorPosition(hOut,COORD{headx,heady});
+    cout<<"*";
+}
+void Snake::NewFruit(){
     srand(time(NULL));
     do {
-        x = rand() % (m - 2) + 1;
-        y = rand() % (m - 2) + 1;
-    } while(board[x][y] != ' ');
-    board[x][y] = '$';
+        fruitx = rand() % (WIDTH - 5) + 3;
+        fruity = rand() % (HEIGHT - 5) + 3;
+    } while(Used());
+    SetConsoleCursorPosition(hOut,COORD{fruitx,fruity});
+    cout<<"$";
 }
-void Snake::Ini(){
-    switch (rand() % 4) {
-        case 0:move = 72;break;
-        case 1:move = 75;break;
-        case 2:move = 78;break;
-        case 3:move = 80;break;
-    }
-    srand(time(NULL));
-    headx = rand() % (m - 6) + 3;
-    heady = rand() % (m - 6) + 3;
-    board[headx][heady] = '*';
-    Q.push(make_pair(headx,heady));
-}
-void Snake::Show(){
-    switch (move){
-        case 72:
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-            break;
-        case 75:
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE);
-            break;
-        case 77:
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_RED);
-            break;
-        case 80:
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE);
-            break;
-    }
-    for(int i=0;i<m;i++){
-        for(int j=0;j<m;j++) cout<<board[i][j]<<" ";
-        cout<<endl;
-    }
+bool Snake::Used(){
+   for(int i=0;i<length;i++) if(fruitx==V[i].X&&fruity==V[i].Y) return true;
+   return false;
 }
 int Snake::Action(){
-    switch(move){
-        case 72:headx--;break;
-        case 75:heady--;break;
-        case 77:heady++;break;
-        case 80:headx++;break;
+    Sleep(speed);
+    if(V[0].X==0||V[0].Y==0||V[0].X==WIDTH||V[0].Y==HEIGHT){
+        GameOver();
+        return 0;
+    }else if(kbhit()){
+        switch(getch()){
+            case 'W':
+            case 'w':move=UP;break;
+            case 'S':
+            case 's':move=DOWN;break;
+            case 'A':
+            case 'a':move=LEFT;break;
+            case 'D':
+            case 'd':move=RIGHT;break;
+            case ' ':move=CENTER;break;
+            case 27:GameOver();return 0;
+        }
+    }else{
+        for(int i=0;i<length;i++){
+            SetConsoleCursorPosition(hOut,COORD{V[i].X,V[i].Y});
+            cout<<" ";
+        }
+        for(int i=length-1;i>1;i--){
+            V[i].X=V[i-1].X;
+            V[i].Y=V[i-1].Y;
+        }
+        switch(move){
+            case LEFT:V[0].X--;break;
+            case DOWN:V[0].Y--;break;
+            case UP:V[0].Y++;break;
+            case RIGHT:V[0].X++;break;
+            case CENTER:return 1;
+        }
+        if(V[0].X==fruitx&&V[0].Y==fruity){
+            NewFruit();
+            score+=length*speed;
+            length++;
+        }
+        for(int i=0;i<length;i++){
+            SetConsoleCursorPosition(hOut,COORD{V[i].X,V[i].Y});
+            cout<<"*";
+        }
+        SetConsoleCursorPosition(hOut,COORD{WIDTH+10,6});
+        cout<<"Your current score: "<<score;
+        if(move==LEFT||move==RIGHT) Sleep((speed*3)/length);
+	    else Sleep((speed*4.5)/length);
     }
-    switch(board[headx][heady]){
-        case '@':
-        case '*':GameOver();return 0;
-        case '$':Eat();break;
-        case ' ':Crawl();break;
-    }
-    Show();
-    //_sleep(200);
-    Instruct();
     return 1;
 }
 void Snake::GameOver(){
-    cout<<"The game has ended.\nInput an positive integer if you want to restart,and a negative one if you don`t."<<endl;
-    int ss;
-    cin>>ss;
-    if(!(ss>0)){
-        cout<<"Game over.See you next time!"<<endl;
-        exit(0);
-    }
-}
-void Snake::Eat(){
-    board[headx][heady]='*';
-    Q.push(make_pair(headx,heady));
-    NewFruit();
-}
-void Snake::Crawl(){
-    board[headx][heady]='*';
-    Q.push(make_pair(headx,heady));
-    pair<int,int> tail=Q.front();
-    Q.pop();
-    board[tail.first][tail.second]=' ';
-}
-void Snake::Instruct(){
-	clock_t timeBegin = clock();
-    char c;
-    while(1){
-        if(kbhit()) c=getch();
-        else if (clock() - timeBegin >= 1000) break;//why?????
-    }
-    if(c==72||c==75||c==77||c==80) move=c;
+    SetConsoleCursorPosition(hOut,COORD{WIDTH/2,HEIGHT/2});
+    cout<<"The game has ended.";
 }
 
 int main() {
-    int sig;
-    while (1) {
-        cout << "Tab any number key to start he game.<<<<<<>>>>>>Tab any other keys to exit." << endl;
-        cin >> sig;
-        if (!(sig >= 0)) {
-            cout << "Successfully exited.See you next time." << endl;
-            exit(0);
-        }
-        Snake snake;
-        while(snake.Action()) ;
-    }
+    system("title 贪吃蛇");
+	system("mode con cols=150 lines=30");
+    Snake snake;
+    while(snake.Action()) ;
 }
