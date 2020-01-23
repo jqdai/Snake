@@ -71,7 +71,7 @@ void Snake::FrameWork(){
     SetConsoleCursorPosition(hOut,COORD{WIDTH+2,4});
     cout<<"3. Tab ESC to qiut game.";
     SetConsoleCursorPosition(hOut,COORD{WIDTH+2,5});
-    cout<<"4. Getting the fruit will earn you 10 points.";
+    cout<<"4. Getting the fruit will earn you some points according to the length and speed of the snake.";
     SetConsoleCursorPosition(hOut,COORD{WIDTH+10,6});
     cout<<"Your current score: "<<score;
 }
@@ -144,6 +144,8 @@ void Snake::Action(){
 void Snake::GameOver(){
     SetConsoleCursorPosition(hOut,COORD{WIDTH/2,HEIGHT/2});
     cout<<"The game has ended.";
+    for(int i=0;i<WIDTH-WIDTH/2-1;i++) cout<<endl<<"║";
+    cout<<endl<<"║"<<endl<<endl;
 }
 
 int main() {
