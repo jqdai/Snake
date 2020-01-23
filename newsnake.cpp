@@ -125,7 +125,7 @@ void Snake::Action(){
                 case 'D':
                 case 'd':move=RIGHT;break;
                 case ' ':move=CENTER;break;
-                case 27:GameOver();return;
+                case 27:GameOver();return ;
             }
         }else{
             if(move==CENTER) continue;
@@ -135,9 +135,12 @@ void Snake::Action(){
                 case UP:heady--;break;
                 case RIGHT:headx++;break;
             }
-            if(board[headx][heady]=='*'||board[headx][heady]=='@'){GameOver();return ;}
-            else if(board[headx][heady]=='$') Eat();
-            else Crawl();
+            switch(board[headx][heady]){
+                case '@':
+                case '*':GameOver();return ;
+                case '$':Eat();break;
+                case ' ':Crawl();break;
+            }
             SetConsoleCursorPosition(hOut,COORD{WIDTH+10,7});
             cout<<"Your current score: "<<score;
             if(move==LEFT||move==RIGHT) Sleep((speed*3)/length);
