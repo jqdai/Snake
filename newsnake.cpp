@@ -174,6 +174,10 @@ void Snake::Crawl(){
 }
 
 int main() {
+    CONSOLE_CURSOR_INFO cinfo;
+    cinfo.bVisible = 0;
+    cinfo.dwSize = 1;
+    SetConsoleCursorInfo(hOut,&cinfo);
     system("title 贪吃蛇");
 	system("mode con cols=150 lines=30");
     Snake snake;
