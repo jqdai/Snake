@@ -18,7 +18,6 @@ class Snake {
         void FrameWork();
         void InitBoard();
         void NewFruit();
-        bool Used();
         void Action();
         void GameOver();
     private:
@@ -92,10 +91,6 @@ void Snake::NewFruit(){
     SetConsoleCursorPosition(hOut,COORD{fruitx,fruity});
     cout<<"$";
 }
-bool Snake::Used(){
-   for(int i=0;i<length;i++) if(fruitx==V[i].X&&fruity==V[i].Y) return true;
-   return false;
-}
 void Snake::Action(){
     while(1){
         if(V[0].X==0||V[0].Y==0||V[0].X==WIDTH||V[0].Y==HEIGHT){
@@ -115,6 +110,7 @@ void Snake::Action(){
                 case 27:GameOver();return ;
             }
         }else{
+            if(move==CENTER) continue;
             for(int i=0;i<length;i++){
                 SetConsoleCursorPosition(hOut,COORD{V[i].X,V[i].Y});
                 cout<<" ";
@@ -123,7 +119,6 @@ void Snake::Action(){
                 V[i].X=V[i-1].X;
                 V[i].Y=V[i-1].Y;
             }
-            if(move==CENTER) continue;
             switch(move){
                 case LEFT:V[0].X--;break;
                 case DOWN:V[0].Y--;break;
