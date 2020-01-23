@@ -78,7 +78,7 @@ void Snake::FrameWork(){
 void Snake::InitBoard(){
     NewFruit();
     srand(time(NULL));
-    int headx=WIDTH,heady=HEIGHT/2;
+    int headx=WIDTH/2,heady=HEIGHT/2;
     V.push_back(COORD{headx,heady});
     SetConsoleCursorPosition(hOut,COORD{headx,heady});
     cout<<"*";
