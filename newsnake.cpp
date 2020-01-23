@@ -113,39 +113,39 @@ void Snake::NewFruit(){
 }
 void Snake::Action(){
     while(1){
-    Sleep(speed);
-    if(kbhit()){
-        switch(getch()){
-            case 'W':
-            case 'w':move=UP;break;
-            case 'S':
-            case 's':move=DOWN;break;
-            case 'A':
-            case 'a':move=LEFT;break;
-            case 'D':
-            case 'd':move=RIGHT;break;
-            case ' ':move=CENTER;break;
-            case 27:GameOver();return;
+        Sleep(speed);
+        if(kbhit()){
+            switch(getch()){
+                case 'W':
+                case 'w':move=UP;break;
+                case 'S':
+                case 's':move=DOWN;break;
+                case 'A':
+                case 'a':move=LEFT;break;
+                case 'D':
+                case 'd':move=RIGHT;break;
+                case ' ':move=CENTER;break;
+                case 27:GameOver();return;
+            }
+        }else{
+            if(move==CENTER) continue;
+            switch(move){
+                case LEFT:headx--;break;
+                case DOWN:heady--;break;
+                case UP:heady++;break;
+                case RIGHT:headx++;break;
+            }
+            switch(board[headx][heady]){
+                case '@':
+                case '*':GameOver();return;
+                case '$':Eat();break;
+                case ' ':Crawl();break;
+            }
+            SetConsoleCursorPosition(hOut,COORD{WIDTH+10,6});
+            cout<<"Your current score: "<<score;
+            if(move==LEFT||move==RIGHT) Sleep((speed*3)/length);
+            else Sleep((speed*4.5)/length);
         }
-    }else{
-        if(move==CENTER) continue;
-        switch(move){
-            case LEFT:headx--;break;
-            case DOWN:heady--;break;
-            case UP:heady++;break;
-            case RIGHT:headx++;break;
-        }
-        switch(board[headx][heady]){
-            case '@':
-            case '*':GameOver();return;
-            case '$':Eat();break;
-            case ' ':Crawl();break;
-        }
-        SetConsoleCursorPosition(hOut,COORD{WIDTH+10,6});
-        cout<<"Your current score: "<<score;
-        if(move==LEFT||move==RIGHT) Sleep((speed*3)/length);
-	    else Sleep((speed*4.5)/length);
-    }
     }
 }
 void Snake::GameOver(){
