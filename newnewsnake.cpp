@@ -31,7 +31,6 @@ class Snake {
 
 Snake::Snake() {
     FrameWork();
-    NewFruit();
     InitBoard();
     length=1;
     score=0;
@@ -77,9 +76,9 @@ void Snake::FrameWork(){
     cout<<"Your current score: "<<score;
 }
 void Snake::InitBoard(){
+    NewFruit();
     srand(time(NULL));
-    int headx = rand() % (WIDTH - 5) + 3;
-    int heady = rand() % (HEIGHT - 5) + 3;
+    int headx=WIDTH,heady=HEIGHT/2;
     V.push_back(COORD{headx,heady});
     SetConsoleCursorPosition(hOut,COORD{headx,heady});
     cout<<"*";
@@ -121,8 +120,8 @@ void Snake::Action(){
             }
             switch(move){
                 case LEFT:V[0].X--;break;
-                case DOWN:V[0].Y--;break;
-                case UP:V[0].Y++;break;
+                case DOWN:V[0].Y++;break;
+                case UP:V[0].Y--;break;
                 case RIGHT:V[0].X++;break;
             }
             if(V[0].X==fruitx&&V[0].Y==fruity){
